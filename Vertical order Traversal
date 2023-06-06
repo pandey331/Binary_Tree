@@ -1,0 +1,48 @@
+class Solution {
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        vector<vector<int>>ans;
+
+        //vertical,<level,node>
+        //We take a multiset, because on each level there may be multi-nodes, and we need those nodes in 
+        //a sorted order, as we can also have same values. We won't be using set, 
+        //because it stores only unique values.
+        map<int,map<int,multiset<int>>>node;
+        if(root==nullptr) return ans;
+
+        //node,0,0
+        queue<pair<TreeNode*, pair<int,int>>>q;
+        q.push({root,{0,0}});
+        while(!q.empty())
+        {
+            auto t=q.front();
+            q.pop();
+            TreeNode* temp=t.first;
+            //x->horizontal distance/vertical ,y->level;
+            int x=t.second.first;
+            int y=t.second.second;
+
+            //inserting first entry into map
+            node[x][y].insert(temp->val);
+            //for left side decrement and right side increment in vertical
+
+            if(temp->left)
+            {
+                q.push({temp->left,{x-1,y+1}});
+            }
+            if(temp->right)
+            {
+                q.push({temp->right,{x+1,y+1}});
+            }
+        }
+        //to print the value
+        for (auto p: node) {
+           vector < int > col;
+           for (auto j: p.second) {
+            col.insert(col.end(), j.second.begin(), j.second.end());
+            }
+          ans.push_back(col);
+        }
+      return ans;   
+    }
+};
